@@ -34,18 +34,18 @@ Runs the entire function on auser.
         If ($MailEnabled) {
             Write-Verbose "Connecting to OnPrem Exchange"
             $OnPremCred = Get-Credential -Message "Domain Admin Credentials"
-            $OnPrem = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri http://es01-prd-gsh/powershell/ -Authentication Kerberos -Credential $OnPremCred
+            $OnPremExchange = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri http://es01-prd-gsh/powershell/ -Authentication Kerberos -Credential $OnPremCred
             Import-PSSession $OnPrem
             Write-Verbose "Disabling Mailbox"
             Disable-RemoteMailbox $user -Confirm:$false
-            Remove-PSSession $OnPrem
+            Remove-PSSession $OnPremExchange
         }
 
         If ($MailEnabled) {
             Write-Verbose "Connecting to Exchange Online"
             $OnlineCred = Get-Credential -Message "Office 365 Admin Credentials"
-            $Online = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.outlook.com/powershell-liveid -Credential $OnlineCred -Authentication Basic -AllowRedirection
-            Import-PSSession $Online
+            $ExchangeOnline = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.outlook.com/powershell-liveid -Credential $OnlineCred -Authentication Basic -AllowRedirection
+            Import-PSSession $ExchangeOnline
             Connect-MsolService -Credential $OnlineCred
             $Licenses = (Get-MsolUser -UserPrincipalName $UPN).Licenses.AccountSkuId
             Write-Verbose "Removing Office 365 License(s)"
@@ -56,7 +56,7 @@ Runs the entire function on auser.
 
             Write-Verbose "Removing MSOL User"
             Remove-MsolUser -UserPrincipalName $UPN -Force
-            Remove-PSSession $Online
+            Remove-PSSession $ExchangeOnline
         }
         
         Write-Verbose "Removing user from AD groups"

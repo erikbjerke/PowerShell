@@ -22,11 +22,11 @@ Resets tuser's password and locks out mobile devices. Forwards tuser's email to 
     )
     BEGIN {
     $Password = -join(33..126 | foreach {[char]$_} | Get-Random -Count 20)
-    $Cred = Get-Credential -Message "Enter on prem domain credentials"
-    $AzureADSync = New-PSSession -ComputerName ds01-prd-gsh -Credential $Cred
-    $UserCredential = Get-Credential -Message "Enter Office 365 credentials"
-    $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.outlook.com/powershell-liveid -Credential $UserCredential -Authentication Basic -AllowRedirection
-    Import-PSSession $Session -DisableNameChecking -AllowClobber
+    $OnpremCred = Get-Credential -Message "Enter on prem domain credentials"
+    $AzureADSync = New-PSSession -ComputerName ds01-prd-gsh -Credential $OnpremCred
+    $OnlineCred = Get-Credential -Message "Enter Office 365 credentials"
+    $ExchangeOnline = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.outlook.com/powershell-liveid -Credential $OnlineCred -Authentication Basic -AllowRedirection
+    Import-PSSession $ExchangeOnline -DisableNameChecking -AllowClobber
     Import-Module Okta
     $OktaUser = (Get-ADUser $User -Properties mail).mail
     $uid = (oktaGetUserbyID -userName $OktaUser).id
@@ -51,6 +51,6 @@ Resets tuser's password and locks out mobile devices. Forwards tuser's email to 
     }
     END {
     Remove-PSSession -Name $AzureADSync
-    Remove-PSSession -Name $Session
+    Remove-PSSession -Name $ExchangeOnline
     }
 }

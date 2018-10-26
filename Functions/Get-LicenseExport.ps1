@@ -27,7 +27,7 @@ Get all licensed users and export them to C:\CSV\AllLicenses.csv
     BEGIN {
         $OnlineCred = Get-Credential ebjerke@westernmilling.com
         $ExchangeOnline = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.outlook.com/powershell-liveid -Credential $OnlineCred -Authentication Basic -AllowRedirection
-        Import-PSSession $Session -DisableNameChecking
+        Import-PSSession $Session -DisableNameChecking -AllowClobber
         Connect-MsolService -Credential $OnlineCred
     }
 

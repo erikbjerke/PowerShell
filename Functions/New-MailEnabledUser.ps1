@@ -76,7 +76,7 @@ Creates new remote mailbox for user 'MailF Test'. Puts it in the Test Accounts O
              
     }
     PROCESS {
-        Import-PSSession $OnPremExchange
+        Import-PSSession $OnPremExchange -AllowClobber
         New-RemoteMailbox -Name "$Name" -FirstName $FirstName -LastName $LastName -Password (ConvertTo-SecureString -AsPlainText $Password -Force) -ResetPasswordOnNextLogon $ResetPasswordOnNextLogon -UserPrincipalName $UPN -OnPremisesOrganizationalUnit "$OrganizationalUnit"
         Remove-PSSession $OnPremExchange
 
@@ -93,9 +93,9 @@ Creates new remote mailbox for user 'MailF Test'. Puts it in the Test Accounts O
         do{
             "Waiting for Azure AD Sync to complete..."
             Start-Sleep -s 15
-            $msoluser = Get-MsolUser -UserPrincipalName $UPN -ErrorAction SilentlyContinue
+            $msolUser = Get-MsolUser -UserPrincipalName $UPN -ErrorAction SilentlyContinue
         }
-        while ($msoluser -eq $null)
+        while ($msolUser -eq $null)
 
         Set-MsolUser -UserPrincipalName $UPN -UsageLocation US
         Set-MsolUserLicense -UserPrincipalName $UPN -AddLicenses $License
