@@ -460,7 +460,8 @@ Unlock-OktaAccount -OktaUserName someone@something.com
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true,HelpMessage="Okta Username")]
-        [string]$OktaUserName
+        [Alias ('UserName')] 
+        [string]$OktaUserName                   
     )
     BEGIN {
         $uid = (oktaGetUserbyID -userName $OktaUserName).id            
