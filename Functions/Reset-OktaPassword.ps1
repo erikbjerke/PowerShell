@@ -10,7 +10,7 @@
     )
     BEGIN {
         $uid = (oktaGetUserbyID -userName $OktaUserName).id
-        $api_token = "00cwdE_UsA6tOuiy-MfHscgWhUXJYf70Q9Vu1_QZX4"
+        $api_token = ""
         $headers = @{'accept'='application/json';'Content-Type'='application/json';'Authorization'="SSWS $api_token"}
         $json = '{
             "credentials": {
